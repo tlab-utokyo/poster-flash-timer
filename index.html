@@ -35,21 +35,24 @@
     background: #000; border-radius: 10px; overflow: hidden; min-height: 0; min-width: 0; }
   #pdf-canvas { max-width: 100%; max-height: 100%; }
 
-  /* Timer panel (right of slide) */
-  #timer-panel { width: 280px; display: flex; flex-direction: column;
+  /* Info panel (right of slide) */
+  #timer-panel { width: 220px; display: flex; flex-direction: column;
     justify-content: center; gap: 1.5rem; padding: 0.5rem 0; min-width: 0; }
-  #slide-info { font-size: 1.6rem; color: #888; text-align: center; font-variant-numeric: tabular-nums; }
-  #timer { font-size: 8.5rem; font-weight: 700; text-align: center; line-height: 1;
+  #slide-info { font-size: 1.4rem; color: #888; text-align: center; font-variant-numeric: tabular-nums; }
+  #filename { font-size: 0.9rem; color: #777; text-align: center; word-break: break-all;
+    padding: 0 0.5rem; line-height: 1.4; }
+
+  /* Bar column (timer + vertical progress bar, far right) */
+  #bar-column { width: 90px; display: flex; flex-direction: column;
+    gap: 0.5rem; padding: 0.25rem 0; }
+  #timer { font-size: 1.9rem; font-weight: 700; text-align: center; line-height: 1.1;
     font-variant-numeric: tabular-nums; color: #4ade80; transition: color 0.3s; }
   #timer.warning { color: #facc15; }
   #timer.critical { color: #ef4444; animation: pulse 0.6s ease-in-out infinite; }
   #timer.finished { color: #ef4444; animation: none; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
-  #filename { font-size: 0.95rem; color: #777; text-align: center; word-break: break-all;
-    padding: 0 0.5rem; line-height: 1.4; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
 
-  /* Vertical progress bar (far right) */
-  #progress-bar-container { width: 80px; height: 100%; background: #1a1a1a;
+  #progress-bar-container { width: 100%; flex: 1; min-height: 0; background: #1a1a1a;
     border-radius: 40px; overflow: hidden; position: relative; border: 2px solid #2a2a2a; }
   #progress-bar { width: 100%; background: #22c55e; border-radius: 40px;
     transition: height 0.1s linear, background-color 0.4s;
@@ -84,11 +87,13 @@
   </div>
   <div id="timer-panel">
     <div id="slide-info">1 / 1</div>
-    <div id="timer">1:00</div>
     <div id="filename"></div>
   </div>
-  <div id="progress-bar-container">
-    <div id="progress-bar"></div>
+  <div id="bar-column">
+    <div id="timer">1:00</div>
+    <div id="progress-bar-container">
+      <div id="progress-bar"></div>
+    </div>
   </div>
   <div id="help-bar">←→: ページ送り ｜ Enter: 次の発表者 ｜ Backspace: 前の発表者 ｜ R: リセット ｜ F: 全画面 ｜ Esc: 戻る</div>
 </div>
