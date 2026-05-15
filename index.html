@@ -88,8 +88,9 @@
   #timer.finished { color: #ef4444; animation: none; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
 
-  #progress-bar-container { background: #1a1a1a; border-radius: 999px; overflow: hidden;
-    position: relative; border: 2px solid #2a2a2a; flex: 1; min-width: 0; min-height: 0; }
+  #progress-bar-container { background: transparent; border-radius: 999px; overflow: hidden;
+    position: relative; border: 1px solid rgba(255,255,255,0.2); flex: 1;
+    min-width: 0; min-height: 0; }
   #bar-column.pos-right #progress-bar-container,
   #bar-column.pos-left  #progress-bar-container { width: 100%; }
   #bar-column.pos-top    #progress-bar-container,
