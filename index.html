@@ -10,22 +10,37 @@
     font-family: 'Segoe UI', 'Yu Gothic UI', 'Meiryo', sans-serif; }
 
   /* ===== Loader ===== */
-  #loader { display: flex; flex-direction: column; align-items: center; justify-content: center;
-    height: 100vh; padding: 2rem; gap: 1.25rem; }
-  #loader h1 { font-size: 2.4rem; letter-spacing: 0.02em; }
-  #loader p.lead { color: #aaa; max-width: 640px; text-align: center; line-height: 1.7; }
+  #loader { display: flex; flex-direction: column; align-items: center;
+    height: 100vh; padding: 2rem 2rem 1rem; gap: 1rem; overflow-y: auto; }
+  #loader h1 { font-size: 2.2rem; letter-spacing: 0.02em; margin-top: 0.5rem; }
+  #loader p.lead { color: #bbb; max-width: 720px; text-align: center; line-height: 1.7; margin: 0; }
+
+  .privacy-note { max-width: 720px; padding: 0.75rem 1.25rem; background: #064e3b;
+    border-left: 4px solid #10b981; border-radius: 6px; color: #d1fae5; font-size: 0.95rem;
+    line-height: 1.5; }
+  .privacy-note b { color: #fff; }
+
+  .key-help { max-width: 720px; width: 100%; background: #161616; border-radius: 10px;
+    padding: 0.5rem 1rem; }
+  .key-help h3 { font-size: 0.9rem; color: #888; font-weight: 500; padding: 0.5rem 0.25rem 0.25rem;
+    border-bottom: 1px solid #2a2a2a; margin-bottom: 0.25rem; letter-spacing: 0.05em; }
+  .key-help table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  .key-help td { padding: 0.4rem 0.5rem; vertical-align: top; line-height: 1.5; }
+  .key-help td:first-child { width: 130px; color: #93c5fd; font-family: 'Consolas', monospace;
+    white-space: nowrap; }
+  .key-help td:nth-child(2) { color: #ddd; }
+
   .file-input-label { padding: 0.9rem 2rem; background: #2563eb; border-radius: 8px;
     cursor: pointer; font-size: 1.05rem; transition: background 0.2s; user-select: none; }
   .file-input-label:hover { background: #1d4ed8; }
   #file-input { display: none; }
-  #file-list { display: none; margin-top: 0.5rem; max-height: 220px; overflow-y: auto;
-    width: 100%; max-width: 640px; background: #161616; border-radius: 8px; padding: 0.75rem 1rem;
-    font-size: 0.9rem; }
-  #file-list div { padding: 0.2rem 0; color: #bbb; }
+  #file-list { display: none; margin-top: 0.25rem; max-height: 180px; overflow-y: auto;
+    width: 100%; max-width: 720px; background: #161616; border-radius: 8px; padding: 0.5rem 1rem;
+    font-size: 0.88rem; }
+  #file-list div { padding: 0.15rem 0; color: #bbb; }
   #start-btn { display: none; padding: 0.9rem 3rem; background: #16a34a; border: none;
     color: white; border-radius: 8px; font-size: 1.15rem; cursor: pointer; }
   #start-btn:hover { background: #15803d; }
-  .hint { color: #666; font-size: 0.85rem; margin-top: 1.5rem; text-align: center; line-height: 1.6; }
 
   /* ===== Presenter ===== */
   #presenter { display: none; height: 100vh; padding: 0; gap: 0; position: relative; background: #000; }
@@ -35,24 +50,50 @@
     background: #000; overflow: hidden; min-height: 0; min-width: 0; }
   #pdf-canvas { max-width: 100%; max-height: 100%; }
 
-  /* Bar column overlaid on the right-edge pillarbox area */
-  #bar-column { position: absolute; top: 0.75rem; right: 0.75rem; bottom: 1.75rem;
-    width: 84px; z-index: 10; display: flex; flex-direction: column; gap: 0.5rem;
+  /* Bar column (overlay, position/thickness configurable) */
+  :root { --bar-thickness: 36px; }
+  #bar-column { position: absolute; z-index: 10; display: flex; gap: 0.5rem;
     pointer-events: none; }
-  #timer { font-size: 1.9rem; font-weight: 700; text-align: center; line-height: 1.1;
-    font-variant-numeric: tabular-nums; color: #4ade80; transition: color 0.3s; }
+  #bar-column.pos-right { top: 0.5rem; right: 0.5rem; bottom: 1.5rem;
+    width: var(--bar-thickness); flex-direction: column; }
+  #bar-column.pos-left  { top: 0.5rem; left:  0.5rem; bottom: 1.5rem;
+    width: var(--bar-thickness); flex-direction: column; }
+  #bar-column.pos-bottom { bottom: 1.5rem; left: 0.5rem; right: 0.5rem;
+    height: var(--bar-thickness); flex-direction: row-reverse; align-items: center; }
+  #bar-column.pos-top    { top: 0.5rem;    left: 0.5rem; right: 0.5rem;
+    height: var(--bar-thickness); flex-direction: row-reverse; align-items: center; }
+
+  #timer { flex: 0 0 auto; font-size: 1.25rem; font-weight: 700; text-align: center;
+    line-height: 1; font-variant-numeric: tabular-nums; color: #4ade80;
+    transition: color 0.3s; min-width: 3.6em; padding: 0 0.25rem; }
+  #bar-column.pos-bottom #timer, #bar-column.pos-top #timer { padding: 0 0.75rem; }
   #timer.warning { color: #facc15; }
   #timer.critical { color: #ef4444; animation: pulse 0.6s ease-in-out infinite; }
   #timer.finished { color: #ef4444; animation: none; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
 
-  #progress-bar-container { width: 100%; flex: 1; min-height: 0; background: #1a1a1a;
-    border-radius: 40px; overflow: hidden; position: relative; border: 2px solid #2a2a2a; }
-  #progress-bar { width: 100%; background: #22c55e; border-radius: 40px;
-    transition: height 0.1s linear, background-color 0.4s;
-    position: absolute; bottom: 0; left: 0; height: 100%; }
+  #progress-bar-container { background: #1a1a1a; border-radius: 999px; overflow: hidden;
+    position: relative; border: 2px solid #2a2a2a; flex: 1; min-width: 0; min-height: 0; }
+  #bar-column.pos-right #progress-bar-container,
+  #bar-column.pos-left  #progress-bar-container { width: 100%; }
+  #bar-column.pos-top    #progress-bar-container,
+  #bar-column.pos-bottom #progress-bar-container { height: 100%; }
+  #progress-bar { background: #22c55e; border-radius: 999px;
+    transition: height 0.1s linear, width 0.1s linear, background-color 0.4s;
+    position: absolute; }
+  #bar-column.pos-right #progress-bar,
+  #bar-column.pos-left  #progress-bar { width: 100%; bottom: 0; left: 0; height: 100%; }
+  #bar-column.pos-top    #progress-bar,
+  #bar-column.pos-bottom #progress-bar { height: 100%; left: 0; top: 0; width: 100%; }
   #progress-bar.warning { background: #facc15; }
   #progress-bar.critical { background: #ef4444; }
+
+  /* Brief on-screen toast for indicator setting changes */
+  #toast { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
+    background: rgba(20, 20, 20, 0.92); color: #fff; padding: 0.5rem 1.2rem;
+    border-radius: 999px; font-size: 0.95rem; opacity: 0; transition: opacity 0.2s;
+    pointer-events: none; z-index: 100; border: 1px solid #333; }
+  #toast.show { opacity: 1; }
 
   #help-bar { position: fixed; bottom: 6px; left: 50%; transform: translateX(-50%);
     color: #444; font-size: 0.75rem; pointer-events: none; opacity: 0.4; }
@@ -62,30 +103,52 @@
 
 <div id="loader">
   <h1>ポスターフラッシュタイマー</h1>
-  <p class="lead">各PDFを1分間ずつ表示します。発表者のPDFを集めたフォルダを選択してください。<br>
-    ファイル名順に並びます（例: <code style="color:#7dd3fc">01_山田.pdf, 02_鈴木.pdf ...</code>）。</p>
-  <label for="file-input" class="file-input-label">📁 フォルダを選択</label>
+  <p class="lead">各PDFを1分間ずつ表示し、残り時間をインジケータバーで可視化します。<br>
+    発表者のPDFを集めたフォルダを選択してください。ファイル名順に並びます
+    （例: <code style="color:#7dd3fc">01_山田.pdf, 02_鈴木.pdf …</code>）。</p>
+
+  <div class="privacy-note">
+    🔒 <b>PDFはアップロードされません。</b>
+    ファイルはあなたのブラウザ内だけで処理されます。サーバーへの送信は一切発生しません
+    (会場のネットが切れていてもタイマーは動作します)。
+  </div>
+
+  <div class="key-help">
+    <h3>操作キー</h3>
+    <table>
+      <tr><td>← / →</td><td>同じ発表者のPDF内でページ送り</td></tr>
+      <tr><td>Enter</td><td>次の発表者へ (タイマーを60秒に自動リセット)</td></tr>
+      <tr><td>Backspace</td><td>前の発表者へ戻る (タイマーをリセット)</td></tr>
+      <tr><td>R</td><td>タイマーを手動でリセット (同じ発表者で再カウント)</td></tr>
+      <tr><td>I</td><td>インジケータの位置を切替 (右→下→左→上→右…)</td></tr>
+      <tr><td>+ / -</td><td>インジケータの太さを変更 (細←→太、5段階)</td></tr>
+      <tr><td>F</td><td>全画面切替 (推奨)</td></tr>
+      <tr><td>Esc</td><td>このファイル選択画面に戻る</td></tr>
+    </table>
+    <div style="font-size:0.8rem; color:#888; padding:0.5rem; line-height:1.5">
+      残り10秒で「チーン」、60秒到達時に「リンリン」と鳴ります。
+      I キーや +/- で変更したインジケータ設定は、このブラウザに記憶され次回も同じ設定で起動します。
+    </div>
+  </div>
+
+  <label for="file-input" class="file-input-label">📁 PDFが入ったフォルダを選択</label>
   <input type="file" id="file-input" webkitdirectory directory multiple>
   <div id="file-list"></div>
   <button id="start-btn">▶ 開始</button>
-  <div class="hint">
-    操作キー: <b>←</b><b>→</b> ページ送り ／ <b>Enter</b> 次の発表者 ／ <b>Backspace</b> 前の発表者 ／
-    <b>R</b> タイマーリセット ／ <b>F</b> 全画面 ／ <b>Esc</b> 戻る<br>
-    残り10秒で「チーン」、60秒到達時に「リンリン」と鳴ります。タイマーは発表者切替時のみリセットされます。
-  </div>
 </div>
 
 <div id="presenter">
   <div id="slide-container">
     <canvas id="pdf-canvas"></canvas>
   </div>
-  <div id="bar-column">
+  <div id="bar-column" class="pos-right">
     <div id="timer">1:00</div>
     <div id="progress-bar-container">
       <div id="progress-bar"></div>
     </div>
   </div>
-  <div id="help-bar">←→: ページ送り ｜ Enter: 次の発表者 ｜ Backspace: 前の発表者 ｜ R: リセット ｜ F: 全画面 ｜ Esc: 戻る</div>
+  <div id="toast"></div>
+  <div id="help-bar">←→: ページ ｜ Enter: 次の発表者 ｜ Backspace: 前 ｜ R: リセット ｜ I: 位置切替 ｜ +/-: 太さ ｜ F: 全画面 ｜ Esc: 戻る</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -105,6 +168,18 @@
   let bellPlayed = false;
   let audioCtx = null;
 
+  const POSITIONS = ['right', 'bottom', 'left', 'top'];
+  const THICKNESS_STEPS = [18, 28, 40, 60, 90];
+  let barConfig = { position: 'right', thicknessIdx: 1 };
+  try {
+    const saved = JSON.parse(localStorage.getItem('pft.barConfig') || 'null');
+    if (saved && POSITIONS.includes(saved.position) &&
+        Number.isInteger(saved.thicknessIdx) &&
+        saved.thicknessIdx >= 0 && saved.thicknessIdx < THICKNESS_STEPS.length) {
+      barConfig = saved;
+    }
+  } catch (e) { /* ignore */ }
+
   const loader = document.getElementById('loader');
   const presenter = document.getElementById('presenter');
   const fileInput = document.getElementById('file-input');
@@ -114,6 +189,38 @@
   const ctx = canvas.getContext('2d');
   const timerEl = document.getElementById('timer');
   const progressBar = document.getElementById('progress-bar');
+  const barColumn = document.getElementById('bar-column');
+  const toastEl = document.getElementById('toast');
+
+  function applyBarConfig() {
+    barColumn.className = 'pos-' + barConfig.position;
+    document.documentElement.style.setProperty(
+      '--bar-thickness', THICKNESS_STEPS[barConfig.thicknessIdx] + 'px');
+    try { localStorage.setItem('pft.barConfig', JSON.stringify(barConfig)); } catch (e) {}
+  }
+  applyBarConfig();
+
+  let toastTimer = null;
+  function showToast(text) {
+    toastEl.textContent = text;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1200);
+  }
+
+  function isHorizontalBar() {
+    return barConfig.position === 'top' || barConfig.position === 'bottom';
+  }
+
+  function currentBarPct() {
+    if (!timerStart) return 100;
+    const elapsed = (performance.now() - timerStart) / 1000;
+    return Math.max(0, (DURATION - elapsed) / DURATION * 100);
+  }
+
+  function posLabel(p) {
+    return { right: '右', left: '左', top: '上', bottom: '下' }[p] || p;
+  }
 
   // ===== Audio =====
   function initAudio() {
@@ -241,6 +348,16 @@
   }
 
   // ===== Timer =====
+  function setBarFill(pct) {
+    if (isHorizontalBar()) {
+      progressBar.style.width = pct + '%';
+      progressBar.style.height = '';
+    } else {
+      progressBar.style.height = pct + '%';
+      progressBar.style.width = '';
+    }
+  }
+
   function resetTimer() {
     if (rafId) cancelAnimationFrame(rafId);
     timerStart = performance.now();
@@ -248,7 +365,7 @@
     bellPlayed = false;
     timerEl.classList.remove('warning', 'critical', 'finished');
     progressBar.classList.remove('warning', 'critical');
-    progressBar.style.height = '100%';
+    setBarFill(100);
     tick();
   }
 
@@ -260,7 +377,7 @@
       timerEl.textContent = '0:00';
       timerEl.classList.remove('warning', 'critical');
       timerEl.classList.add('finished');
-      progressBar.style.height = '0%';
+      setBarFill(0);
       progressBar.classList.remove('warning');
       progressBar.classList.add('critical');
       if (!bellPlayed) { playDoubleBell(); bellPlayed = true; }
@@ -270,7 +387,7 @@
     const mins = Math.floor(remaining / 60);
     const secs = Math.floor(remaining % 60);
     timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-    progressBar.style.height = (remaining / DURATION * 100) + '%';
+    setBarFill(remaining / DURATION * 100);
 
     if (remaining <= 10) {
       timerEl.classList.remove('warning');
@@ -306,6 +423,27 @@
     } else if (e.key === 'r' || e.key === 'R') {
       e.preventDefault();
       resetTimer();
+    } else if (e.key === 'i' || e.key === 'I') {
+      e.preventDefault();
+      const idx = POSITIONS.indexOf(barConfig.position);
+      barConfig.position = POSITIONS[(idx + 1) % POSITIONS.length];
+      applyBarConfig();
+      setBarFill(currentBarPct());
+      showToast('インジケータ位置: ' + posLabel(barConfig.position));
+    } else if (e.key === '+' || e.key === '=' || (e.key === ';' && e.shiftKey)) {
+      e.preventDefault();
+      if (barConfig.thicknessIdx < THICKNESS_STEPS.length - 1) {
+        barConfig.thicknessIdx++;
+        applyBarConfig();
+        showToast('インジケータ太さ: ' + THICKNESS_STEPS[barConfig.thicknessIdx] + 'px');
+      }
+    } else if (e.key === '-' || e.key === '_') {
+      e.preventDefault();
+      if (barConfig.thicknessIdx > 0) {
+        barConfig.thicknessIdx--;
+        applyBarConfig();
+        showToast('インジケータ太さ: ' + THICKNESS_STEPS[barConfig.thicknessIdx] + 'px');
+      }
     } else if (e.key === 'f' || e.key === 'F') {
       e.preventDefault();
       if (!document.fullscreenElement) document.documentElement.requestFullscreen();
