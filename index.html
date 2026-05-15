@@ -42,6 +42,22 @@
     color: white; border-radius: 8px; font-size: 1.15rem; cursor: pointer; }
   #start-btn:hover { background: #15803d; }
 
+  .duration-config { display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    background: #161616; padding: 0.9rem 1.5rem; border-radius: 10px;
+    max-width: 720px; width: 100%; }
+  .duration-config .row { display: flex; align-items: center; gap: 0.6rem;
+    color: #ddd; font-size: 1.05rem; }
+  #duration-input { background: #0a0a0a; color: #fff; border: 1px solid #444;
+    border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 1.1rem; width: 90px;
+    text-align: center; font-variant-numeric: tabular-nums; }
+  #duration-input:focus { outline: 2px solid #2563eb; outline-offset: 1px; }
+  .presets { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+  .preset-btn { background: #1f2937; color: #ddd; border: 1px solid #374151;
+    border-radius: 6px; padding: 0.4rem 0.85rem; cursor: pointer; font-size: 0.9rem;
+    transition: background 0.15s, border-color 0.15s; font-family: inherit; }
+  .preset-btn:hover { background: #374151; }
+  .preset-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+
   /* ===== Presenter ===== */
   #presenter { display: none; height: 100vh; padding: 0; gap: 0; position: relative; background: #000; }
   #presenter.active { display: flex; }
@@ -103,7 +119,7 @@
 
 <div id="loader">
   <h1>ポスターフラッシュタイマー</h1>
-  <p class="lead">各PDFを1分間ずつ表示し、残り時間をインジケータバーで可視化します。<br>
+  <p class="lead">各PDFを <b id="dur-display" style="color:#7dd3fc">1分</b> ずつ表示し、残り時間をインジケータバーで可視化します。<br>
     発表者のPDFを集めたフォルダを選択してください。ファイル名順に並びます
     （例: <code style="color:#7dd3fc">01_山田.pdf, 02_鈴木.pdf …</code>）。</p>
 
@@ -128,6 +144,22 @@
     <div style="font-size:0.8rem; color:#888; padding:0.5rem; line-height:1.5">
       残り10秒で「チーン」、60秒到達時に「リンリン」と鳴ります。
       I キーや +/- で変更したインジケータ設定は、このブラウザに記憶され次回も同じ設定で起動します。
+    </div>
+  </div>
+
+  <div class="duration-config">
+    <div class="row">
+      <span>各発表者の持ち時間:</span>
+      <input type="number" id="duration-input" min="5" max="600" step="5" value="60">
+      <span>秒</span>
+    </div>
+    <div class="presets">
+      <button class="preset-btn" data-sec="30" type="button">30秒</button>
+      <button class="preset-btn" data-sec="60" type="button">1分</button>
+      <button class="preset-btn" data-sec="90" type="button">1分30秒</button>
+      <button class="preset-btn" data-sec="120" type="button">2分</button>
+      <button class="preset-btn" data-sec="180" type="button">3分</button>
+      <button class="preset-btn" data-sec="300" type="button">5分</button>
     </div>
   </div>
 
@@ -156,7 +188,11 @@
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  const DURATION = 60;
+  let DURATION = 60;
+  try {
+    const savedDur = parseInt(localStorage.getItem('pft.duration'), 10);
+    if (savedDur >= 5 && savedDur <= 600) DURATION = savedDur;
+  } catch (e) {}
 
   let files = [];
   let currentIndex = 0;
@@ -221,6 +257,34 @@
   function posLabel(p) {
     return { right: '右', left: '左', top: '上', bottom: '下' }[p] || p;
   }
+
+  // ===== Duration config =====
+  const durationInput = document.getElementById('duration-input');
+  const durDisplay = document.getElementById('dur-display');
+  const presetBtns = document.querySelectorAll('.preset-btn');
+
+  function humanDuration(sec) {
+    const m = Math.floor(sec / 60), s = sec % 60;
+    if (m === 0) return `${s}秒`;
+    if (s === 0) return `${m}分`;
+    return `${m}分${s}秒`;
+  }
+  function formatTime(sec) {
+    const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+  function applyDuration(newDur) {
+    DURATION = Math.max(5, Math.min(600, Math.round(newDur)));
+    durationInput.value = DURATION;
+    durDisplay.textContent = humanDuration(DURATION);
+    timerEl.textContent = formatTime(DURATION);
+    presetBtns.forEach(b => b.classList.toggle('active',
+      parseInt(b.dataset.sec, 10) === DURATION));
+    try { localStorage.setItem('pft.duration', String(DURATION)); } catch (e) {}
+  }
+  durationInput.addEventListener('change', () => applyDuration(parseInt(durationInput.value, 10) || 60));
+  presetBtns.forEach(b => b.addEventListener('click', () => applyDuration(parseInt(b.dataset.sec, 10))));
+  applyDuration(DURATION); // initial sync of display/input/highlight
 
   // ===== Audio =====
   function initAudio() {
@@ -372,6 +436,9 @@
   function tick() {
     const elapsed = (performance.now() - timerStart) / 1000;
     const remaining = Math.max(0, DURATION - elapsed);
+    // Critical (chime + red) and warning (yellow) scale with duration but capped
+    const critThresh = Math.min(10, Math.max(3, DURATION * 0.17));
+    const warnThresh = Math.min(30, Math.max(5, DURATION * 0.33));
 
     if (remaining <= 0) {
       timerEl.textContent = '0:00';
@@ -384,18 +451,16 @@
       return;
     }
 
-    const mins = Math.floor(remaining / 60);
-    const secs = Math.floor(remaining % 60);
-    timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    timerEl.textContent = formatTime(remaining);
     setBarFill(remaining / DURATION * 100);
 
-    if (remaining <= 10) {
+    if (remaining <= critThresh) {
       timerEl.classList.remove('warning');
       timerEl.classList.add('critical');
       progressBar.classList.remove('warning');
       progressBar.classList.add('critical');
       if (!chimePlayed) { playChime(); chimePlayed = true; }
-    } else if (remaining <= 20) {
+    } else if (remaining <= warnThresh) {
       timerEl.classList.add('warning');
       progressBar.classList.add('warning');
     }
