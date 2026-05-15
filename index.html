@@ -72,8 +72,8 @@
   <div id="file-list"></div>
   <button id="start-btn">▶ 開始</button>
   <div class="hint">
-    操作キー: <b>Space</b> 次ページ (最終なら次の発表者) ／ <b>→</b><b>←</b> ページ送り ／
-    <b>N</b><b>P</b> 次/前の発表者 ／ <b>R</b> タイマーリセット ／ <b>F</b> 全画面 ／ <b>Esc</b> 戻る<br>
+    操作キー: <b>←</b><b>→</b> ページ送り ／ <b>Enter</b> 次の発表者 ／ <b>Backspace</b> 前の発表者 ／
+    <b>R</b> タイマーリセット ／ <b>F</b> 全画面 ／ <b>Esc</b> 戻る<br>
     残り10秒で「チーン」、60秒到達時に「リンリン」と鳴ります。タイマーは発表者切替時のみリセットされます。
   </div>
 </div>
@@ -90,7 +90,7 @@
   <div id="progress-bar-container">
     <div id="progress-bar"></div>
   </div>
-  <div id="help-bar">Space: 次ページ/発表者 ｜ →←: ページ ｜ N/P: 発表者送り ｜ R: リセット ｜ F: 全画面 ｜ Esc: 戻る</div>
+  <div id="help-bar">←→: ページ送り ｜ Enter: 次の発表者 ｜ Backspace: 前の発表者 ｜ R: リセット ｜ F: 全画面 ｜ Esc: 戻る</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -307,21 +307,16 @@
     if (!presenter.classList.contains('active')) return;
     const total = currentPdf ? currentPdf.numPages : 1;
 
-    if (e.key === ' ' || e.key === 'Enter') {
-      // smart advance: next page within PDF, or next presenter when at last page
+    if (e.key === 'ArrowRight') {
       e.preventDefault();
       if (currentPage < total) gotoPage(currentPage + 1);
-      else if (currentIndex < files.length - 1) loadSlide(currentIndex + 1);
-    } else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
-      e.preventDefault();
-      if (currentPage < total) gotoPage(currentPage + 1);
-    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+    } else if (e.key === 'ArrowLeft') {
       e.preventDefault();
       if (currentPage > 1) gotoPage(currentPage - 1);
-    } else if (e.key === 'n' || e.key === 'N') {
+    } else if (e.key === 'Enter') {
       e.preventDefault();
       if (currentIndex < files.length - 1) loadSlide(currentIndex + 1);
-    } else if (e.key === 'p' || e.key === 'P') {
+    } else if (e.key === 'Backspace') {
       e.preventDefault();
       if (currentIndex > 0) loadSlide(currentIndex - 1);
     } else if (e.key === 'r' || e.key === 'R') {
