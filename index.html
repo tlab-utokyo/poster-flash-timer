@@ -28,16 +28,17 @@
   .hint { color: #666; font-size: 0.85rem; margin-top: 1.5rem; text-align: center; line-height: 1.6; }
 
   /* ===== Presenter ===== */
-  #presenter { display: none; height: 100vh; padding: 1rem; gap: 1rem; }
+  #presenter { display: none; height: 100vh; padding: 0; gap: 0; position: relative; background: #000; }
   #presenter.active { display: flex; }
 
   #slide-container { flex: 1; display: flex; align-items: center; justify-content: center;
-    background: #000; border-radius: 10px; overflow: hidden; min-height: 0; min-width: 0; }
+    background: #000; overflow: hidden; min-height: 0; min-width: 0; }
   #pdf-canvas { max-width: 100%; max-height: 100%; }
 
-  /* Bar column (timer + vertical progress bar, far right) */
-  #bar-column { width: 90px; display: flex; flex-direction: column;
-    gap: 0.5rem; padding: 0.25rem 0; }
+  /* Bar column overlaid on the right-edge pillarbox area */
+  #bar-column { position: absolute; top: 0.75rem; right: 0.75rem; bottom: 1.75rem;
+    width: 84px; z-index: 10; display: flex; flex-direction: column; gap: 0.5rem;
+    pointer-events: none; }
   #timer { font-size: 1.9rem; font-weight: 700; text-align: center; line-height: 1.1;
     font-variant-numeric: tabular-nums; color: #4ade80; transition: color 0.3s; }
   #timer.warning { color: #facc15; }
@@ -224,8 +225,8 @@
     if (!currentPdf) return;
     const page = await currentPdf.getPage(pageNum);
     const container = document.getElementById('slide-container');
-    const cw = container.clientWidth - 16;
-    const ch = container.clientHeight - 16;
+    const cw = container.clientWidth;
+    const ch = container.clientHeight;
     const base = page.getViewport({ scale: 1 });
     const scale = Math.min(cw / base.width, ch / base.height);
     const dpr = window.devicePixelRatio || 1;
